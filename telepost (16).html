@@ -1,0 +1,2042 @@
+<meta charset="UTF-8">
+<style>
+  :root{
+    --bg:#0B0F17;
+    --surface:#121826;
+    --surface-2:#1A2233;
+    --border:#232B3D;
+    --text:#E7ECF6;
+    --muted:#8793AD;
+    --accent:#00D1B2;
+    --accent-dim:#0A3B34;
+    --gold:#E8A33D;
+    --gold-dim:#4A3316;
+    --danger:#EF5A6F;
+    --radius:14px;
+    font-family:'Inter',system-ui,sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);}
+  #tp-root{width:100%;min-height:600px;background:var(--bg);display:flex;flex-direction:column;color:var(--text);}
+
+  .tp-display{font-family:'Sora',sans-serif;}
+
+  /* ---------- Auth screen ---------- */
+  .tp-auth{
+    min-height:600px;display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(0,209,178,0.12), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(232,163,61,0.10), transparent 40%),
+      var(--bg);
+    padding:32px 16px;
+  }
+  .tp-auth-card{
+    width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);
+    border-radius:20px;padding:32px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .tp-logo{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .tp-logo-mark{
+    width:38px;height:38px;border-radius:11px;
+    background:linear-gradient(135deg,var(--accent),#0A8F7A);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Sora',sans-serif;font-weight:800;color:#04211C;font-size:18px;flex-shrink:0;
+  }
+  .tp-logo-text{font-family:'Sora',sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.02em;}
+  .tp-auth-sub{color:var(--muted);font-size:13.5px;margin:6px 0 24px;line-height:1.5;}
+  .tp-tabs{display:flex;background:var(--surface-2);border-radius:10px;padding:4px;margin-bottom:20px;}
+  .tp-tab-btn{
+    flex:1;text-align:center;padding:9px 0;border:none;background:transparent;color:var(--muted);
+    font-weight:600;font-size:13.5px;border-radius:8px;cursor:pointer;transition:all .15s ease;font-family:inherit;
+  }
+  .tp-tab-btn.active{background:var(--accent);color:#04211C;}
+  .tp-field{margin-bottom:14px;}
+  .tp-field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:500;}
+  .tp-field input{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+    padding:11px 13px;color:var(--text);font-size:14.5px;font-family:inherit;outline:none;transition:border-color .15s;
+  }
+  .tp-field input:focus{border-color:var(--accent);}
+  .tp-btn-primary{
+    width:100%;background:var(--accent);color:#04211C;border:none;border-radius:10px;
+    padding:12px 0;font-weight:700;font-size:14.5px;cursor:pointer;margin-top:6px;font-family:inherit;
+    transition:filter .15s;
+  }
+  .tp-btn-primary:hover{filter:brightness(1.08);}
+  .tp-btn-primary:disabled{opacity:0.55;cursor:default;}
+  .tp-btn-secondary{
+    width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;
+    padding:11px 0;font-weight:600;font-size:13.5px;cursor:pointer;margin-top:8px;font-family:inherit;
+  }
+  .tp-error{color:var(--danger);font-size:12.5px;margin-top:10px;min-height:16px;}
+  .tp-success{color:var(--accent);font-size:12.5px;margin-top:10px;min-height:16px;}
+  .tp-hint{color:var(--muted);font-size:12px;margin-top:16px;text-align:center;line-height:1.6;}
+
+  /* ---------- App shell ---------- */
+  .tp-app{display:flex;flex-direction:column;min-height:600px;}
+  .tp-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface);
+    position:sticky;top:0;z-index:5;
+  }
+  .tp-header-left{display:flex;align-items:center;gap:10px;}
+  .tp-wallet{
+    display:flex;align-items:center;gap:6px;background:var(--gold-dim);color:var(--gold);
+    padding:6px 12px;border-radius:20px;font-weight:700;font-size:13px;
+  }
+  .tp-header-right{display:flex;align-items:center;gap:10px;}
+  .tp-icon-btn{
+    background:var(--surface-2);border:1px solid var(--border);color:var(--muted);
+    border-radius:9px;padding:7px 11px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;
+  }
+  .tp-icon-btn:hover{color:var(--text);}
+
+  .tp-navbar{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);}
+  .tp-nav-btn{
+    padding:8px 16px;border-radius:9px;border:none;background:transparent;color:var(--muted);
+    font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;
+  }
+  .tp-nav-btn.active{background:var(--surface-2);color:var(--accent);}
+
+  .tp-body{flex:1;display:flex;min-height:0;}
+
+  /* ---------- Chats ---------- */
+  .tp-chat-list{width:240px;border-right:1px solid var(--border);background:var(--surface);flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;}
+  .tp-chat-item{
+    display:flex;gap:10px;align-items:center;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);
+  }
+  .tp-chat-item:hover, .tp-chat-item.active{background:var(--surface-2);}
+  .tp-avatar{
+    width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#3B4A66,#1A2233);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;
+  }
+  .tp-chat-name{font-weight:600;font-size:13.5px;}
+  .tp-chat-preview{color:var(--muted);font-size:12px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;}
+  .tp-chat-window{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .tp-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px;}
+  .tp-msg{max-width:65%;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;}
+  .tp-msg.me{align-self:flex-end;background:var(--accent);color:#04211C;border-bottom-right-radius:4px;}
+  .tp-msg.them{align-self:flex-start;background:var(--surface-2);border-bottom-left-radius:4px;}
+  .tp-composer{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--border);}
+  .tp-composer input{
+    flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+    padding:10px 13px;color:var(--text);font-family:inherit;font-size:13.5px;outline:none;
+  }
+  .tp-send-btn{background:var(--accent);color:#04211C;border:none;border-radius:10px;padding:0 18px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+  .tp-addfriend{padding:12px;border-bottom:1px solid var(--border);}
+  .tp-addfriend-row{display:flex;gap:6px;}
+  .tp-addfriend input{
+    flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+    padding:8px 10px;color:var(--text);font-family:inherit;font-size:12.5px;outline:none;min-width:0;
+  }
+  .tp-addfriend button{
+    background:var(--accent);color:#04211C;border:none;border-radius:8px;padding:0 12px;
+    font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;
+  }
+  .tp-addfriend-msg{font-size:11px;color:var(--muted);margin-top:6px;min-height:14px;}
+  .tp-section-label{padding:10px 14px 4px;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+
+  /* ---------- Premium feed ---------- */
+  .tp-feed{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:16px;align-items:center;}
+  .tp-post{width:100%;max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;position:relative;}
+  .tp-post-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .tp-post-author{font-weight:700;font-size:13.5px;}
+  .tp-post-meta{color:var(--muted);font-size:11.5px;}
+  .tp-post-text{font-size:14px;line-height:1.55;color:var(--text);}
+  .tp-post-text.locked{filter:blur(5px);user-select:none;}
+  .tp-badge-premium{
+    position:absolute;top:14px;right:16px;display:flex;align-items:center;gap:5px;
+    background:var(--gold-dim);color:var(--gold);padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;
+  }
+  .tp-unlock-bar{
+    margin-top:12px;display:flex;align-items:center;justify-content:space-between;
+    background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;
+  }
+  .tp-unlock-text{font-size:12.5px;color:var(--muted);}
+  .tp-unlock-btn{
+    background:var(--gold);color:#2B1B04;border:none;border-radius:8px;padding:8px 14px;font-weight:700;
+    font-size:12.5px;cursor:pointer;font-family:inherit;white-space:nowrap;
+  }
+  .tp-unlock-btn:disabled{opacity:.5;cursor:default;}
+  .tp-unlocked-tag{color:var(--accent);font-size:11.5px;font-weight:700;margin-top:10px;}
+
+  .tp-composer-panel{width:100%;max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;}
+  .tp-composer-panel textarea{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+    padding:11px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none;resize:vertical;min-height:70px;
+  }
+  .tp-composer-row{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap;}
+  .tp-composer-check{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;}
+  .tp-composer-price{display:flex;align-items:center;gap:6px;}
+  .tp-composer-price input{
+    width:90px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+    padding:7px 9px;color:var(--text);font-family:inherit;font-size:12.5px;outline:none;
+  }
+  .tp-new-post-toggle{
+    width:100%;max-width:560px;background:var(--surface);border:1px dashed var(--border);border-radius:16px;
+    padding:14px 18px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;text-align:center;
+  }
+  .tp-new-post-toggle:hover{color:var(--text);border-color:var(--accent);}
+
+  /* ---------- Profile ---------- */
+  .tp-profile{flex:1;overflow-y:auto;padding:28px;display:flex;justify-content:center;}
+  .tp-profile-card{width:100%;max-width:420px;}
+  .tp-profile-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+  .tp-profile-avatar{
+    width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0A8F7A);
+    display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;
+  }
+  .tp-profile-name{font-weight:800;font-size:18px;font-family:'Sora',sans-serif;}
+  .tp-profile-balance{color:var(--gold);font-size:13px;font-weight:600;margin-top:3px;}
+  .tp-emoji-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+  .tp-emoji-btn{
+    width:40px;height:40px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);
+    font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
+  .tp-emoji-btn.selected{border-color:var(--accent);background:var(--accent-dim);}
+  .tp-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+  .tp-panel h3{font-size:13.5px;margin-bottom:14px;font-family:'Sora',sans-serif;}
+
+  .tp-empty{color:var(--muted);font-size:13px;text-align:center;padding:40px 20px;}
+  .tp-toast{
+    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--surface-2);
+    border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;font-size:13px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:50;
+  }
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--surface-2);border-radius:4px;}
+
+  /* ---------- Nickname colors (premium cosmetic) ---------- */
+  .tp-name-rainbow{
+    background:linear-gradient(90deg,#FF5C5C,#FFC24B,#4BFF9F,#4BD1FF,#B36BFF,#FF5C5C);
+    background-size:300% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:tp-rainbow-move 4s linear infinite;font-weight:800;
+  }
+  @keyframes tp-rainbow-move{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
+  .tp-name-gold{color:var(--gold);font-weight:800;}
+  .tp-name-cyan{color:#4BD1FF;font-weight:800;}
+  .tp-name-pink{color:#FF6BD6;font-weight:800;}
+  .tp-name-green{color:#4BFF9F;font-weight:800;}
+
+  /* ---------- TELEpost Premium membership perks ---------- */
+  .tp-premium-panel{
+    background:linear-gradient(135deg, rgba(232,163,61,0.10), rgba(0,209,178,0.06));
+    border:1px solid var(--gold-dim);
+  }
+  .tp-premium-badge{
+    display:inline-flex;align-items:center;gap:4px;background:var(--gold-dim);color:var(--gold);
+    padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:800;margin-left:8px;vertical-align:middle;
+  }
+  .tp-benefit-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-size:12.5px;color:var(--text);line-height:1.5;}
+  .tp-benefit-row .ic{font-size:16px;flex-shrink:0;}
+  .tp-benefit-row b{display:block;font-size:13px;margin-bottom:1px;}
+  .tp-benefit-row span.d{color:var(--muted);}
+
+  /* Avatar frames */
+  .tp-avatar-frame{position:relative;display:inline-flex;}
+  .tp-avatar-frame.frame-pulse .tp-profile-avatar, .tp-avatar-frame.frame-pulse .tp-avatar{
+    animation:tp-frame-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes tp-frame-pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,209,178,.55);}50%{box-shadow:0 0 0 6px rgba(0,209,178,0);}}
+  .tp-avatar-frame.frame-spin::before{
+    content:'';position:absolute;inset:-4px;border-radius:50%;
+    background:conic-gradient(from 0deg, #FF5C5C,#FFC24B,#4BFF9F,#4BD1FF,#B36BFF,#FF5C5C);
+    animation:tp-frame-spin 3s linear infinite;z-index:0;
+  }
+  .tp-avatar-frame.frame-spin .tp-profile-avatar, .tp-avatar-frame.frame-spin .tp-avatar{position:relative;z-index:1;}
+  @keyframes tp-frame-spin{100%{transform:rotate(360deg);}}
+  .tp-avatar-frame.frame-gold::before{
+    content:'';position:absolute;inset:-4px;border-radius:50%;
+    border:3px solid var(--gold);box-shadow:0 0 12px rgba(232,163,61,.6);z-index:0;
+  }
+  .tp-avatar-frame.frame-gold .tp-profile-avatar, .tp-avatar-frame.frame-gold .tp-avatar{position:relative;z-index:1;}
+  .tp-frame-swatch{width:44px;height:44px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:16px;}
+
+  /* Status badge (emoji + short text next to name) */
+  .tp-status-badge{
+    display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);
+    background:var(--surface-2);padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;
+  }
+
+  /* Reactions */
+  .tp-reactions-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center;}
+  .tp-reaction-chip{
+    display:inline-flex;align-items:center;gap:3px;background:var(--surface-2);border:1px solid var(--border);
+    border-radius:12px;padding:2px 7px;font-size:11.5px;cursor:pointer;font-family:inherit;color:var(--text);
+  }
+  .tp-reaction-chip.mine{border-color:var(--accent);background:var(--accent-dim);}
+  .tp-reaction-add{
+    background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:12px;
+    padding:2px 8px;font-size:11px;cursor:pointer;font-family:inherit;
+  }
+  .tp-reaction-picker{
+    position:absolute;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;
+    padding:8px;display:flex;flex-wrap:wrap;gap:6px;max-width:220px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:20;
+  }
+  .tp-reaction-picker button{
+    background:transparent;border:none;font-size:17px;cursor:pointer;padding:3px;border-radius:6px;
+  }
+  .tp-reaction-picker button:hover{background:var(--surface);}
+  .tp-reaction-picker button.locked{opacity:.35;cursor:not-allowed;}
+  .tp-reaction-picker .lbl{width:100%;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:2px 0;}
+  .tp-sticker-anim{display:inline-block;animation:tp-sticker-bounce 1.1s ease-in-out infinite;}
+  @keyframes tp-sticker-bounce{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-3px) scale(1.15);}}
+
+  /* ---------- News feed ---------- */
+  .tp-feed-toolbar{
+    width:100%;max-width:560px;display:flex;gap:8px;margin-bottom:2px;flex-wrap:wrap;
+  }
+  .tp-feed-toggle{
+    display:flex;background:var(--surface-2);border-radius:9px;padding:3px;border:1px solid var(--border);
+  }
+  .tp-feed-toggle button{
+    border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:600;padding:6px 12px;
+    border-radius:7px;cursor:pointer;font-family:inherit;
+  }
+  .tp-feed-toggle button.active{background:var(--accent);color:#04211C;}
+
+  .tp-post-media{width:100%;border-radius:12px;margin:10px 0;overflow:hidden;background:#000;display:flex;justify-content:center;}
+  .tp-post-media img{width:100%;max-height:420px;object-fit:cover;display:block;}
+  .tp-post-media video{max-width:100%;max-height:480px;display:block;}
+
+  .tp-post-actions{display:flex;align-items:center;gap:14px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+  .tp-post-action-btn{
+    background:transparent;border:none;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;
+    font-family:inherit;display:flex;align-items:center;gap:5px;
+  }
+  .tp-post-action-btn:hover{color:var(--text);}
+  .tp-post-action-btn.liked{color:var(--accent);}
+
+  .tp-comments-box{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+  .tp-comment{display:flex;gap:8px;margin-bottom:8px;font-size:12.5px;}
+  .tp-comment b{font-weight:700;margin-right:4px;}
+  .tp-comment-input-row{display:flex;gap:8px;margin-top:8px;}
+  .tp-comment-input-row input{
+    flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:20px;
+    padding:8px 14px;color:var(--text);font-family:inherit;font-size:12.5px;outline:none;
+  }
+  .tp-comment-send{background:var(--accent);color:#04211C;border:none;border-radius:20px;padding:0 14px;font-weight:700;cursor:pointer;font-family:inherit;font-size:12px;}
+
+  .tp-media-input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+  .tp-media-btn{
+    background:var(--surface-2);border:1px solid var(--border);color:var(--muted);border-radius:8px;
+    padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
+  }
+  .tp-media-preview{position:relative;margin-bottom:12px;}
+  .tp-media-preview img{max-width:100%;max-height:200px;border-radius:10px;display:block;}
+  .tp-media-remove{
+    position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.7);color:#fff;border:none;
+    border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:13px;
+  }
+
+  /* ---------- Search / groups / notifications / voice ---------- */
+  .tp-search-box{padding:10px 12px;border-bottom:1px solid var(--border);}
+  .tp-search-box input{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+    padding:8px 10px;color:var(--text);font-family:inherit;font-size:12.5px;outline:none;
+  }
+  .tp-search-results{max-height:160px;overflow-y:auto;}
+  .tp-search-result-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;font-size:12.5px;}
+  .tp-search-result-item button{
+    background:var(--accent);color:#04211C;border:none;border-radius:8px;padding:5px 10px;
+    font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;
+  }
+  .tp-group-composer{padding:12px;border-bottom:1px solid var(--border);background:var(--surface-2);}
+  .tp-group-composer input[type=text]{
+    width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:8px 10px;color:var(--text);font-family:inherit;font-size:12.5px;outline:none;margin-bottom:8px;
+  }
+  .tp-group-member-check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text);padding:3px 0;}
+  .tp-new-group-btn{
+    width:100%;background:transparent;border:1px dashed var(--border);color:var(--muted);
+    border-radius:10px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin:8px 12px;width:calc(100% - 24px);
+  }
+  .tp-new-group-btn:hover{color:var(--text);border-color:var(--accent);}
+
+  .tp-notif-bell{position:relative;}
+  .tp-notif-dot{
+    position:absolute;top:-3px;right:-3px;background:var(--danger);color:#fff;font-size:9.5px;font-weight:800;
+    border-radius:10px;min-width:15px;height:15px;display:flex;align-items:center;justify-content:center;padding:0 3px;
+  }
+  .tp-notif-dropdown{
+    position:absolute;top:44px;right:16px;width:300px;max-height:360px;overflow-y:auto;background:var(--surface);
+    border:1px solid var(--border);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.5);z-index:40;
+  }
+  .tp-notif-item{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12.5px;line-height:1.4;}
+  .tp-notif-item.unread{background:rgba(0,209,178,0.06);}
+  .tp-notif-item .t{color:var(--muted);font-size:10.5px;margin-top:2px;}
+  .tp-notif-empty{padding:24px;text-align:center;color:var(--muted);font-size:12.5px;}
+
+  .tp-mic-btn{
+    background:var(--surface-2);border:1px solid var(--border);color:var(--text);border-radius:10px;
+    padding:0 14px;font-size:15px;cursor:pointer;font-family:inherit;
+  }
+  .tp-mic-btn.recording{background:var(--danger);color:#fff;border-color:var(--danger);animation:tp-mic-pulse 1s ease-in-out infinite;}
+  @keyframes tp-mic-pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,90,111,.5);}50%{box-shadow:0 0 0 8px rgba(239,90,111,0);}}
+  .tp-voice-msg{display:flex;align-items:center;gap:8px;}
+  .tp-voice-msg audio{height:32px;max-width:190px;}
+</style>
+
+<div id="tp-root"></div>
+
+<script>
+(function(){
+  const root = document.getElementById('tp-root');
+
+  const state = {
+    view: 'auth',
+    authMode: 'login',
+    username: null,
+    coins: 0,
+    avatar: '🙂',
+    nameColor: 'default',
+    isPremium: false,
+    avatarFrame: 'none',
+    statusEmoji: '',
+    statusText: '',
+    reactionPickerFor: null, // ts of message currently showing the reaction picker
+    error: '',
+    loading: false,
+    tab: 'chats',
+    activeRoom: 'global',
+    posts: [],
+    unlocked: [],
+    messages: [],
+    friends: [],
+    toast: null,
+    addFriendMsg: '',
+    profileMsg: '',
+    pendingCode: '',
+    pendingUsername: '',
+    pendingPassword: '',
+    pendingUserObj: null,
+    showCodeLogin: false,
+    myCode: '',
+    showComposer: false,
+    composerPremium: true,
+    composerImage: null,
+    composerVideoUrl: '',
+    feedFilter: 'all', // all | friends
+    feedSort: 'new', // new | popular
+    expandedComments: {},
+    userDirectory: [],
+    friendSearchQuery: '',
+    groups: [],
+    showGroupComposer: false,
+    groupComposerMembers: [],
+    isRecording: false,
+    notifications: [],
+    notifOpen: false,
+    notifPermission: (typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'),
+  };
+
+  const SEED_POSTS = [
+    {id:'p1', author:'Анна Кодер', meta:'IT-канал · 2 ч назад', premium:false, price:0,
+      text:'Сегодня разобрали, как устроен event loop в JS. Свободный пост — читайте на здоровье!'},
+    {id:'p2', author:'Анна Кодер', meta:'IT-канал · вчера', premium:true, price:300,
+      text:'Полный разбор системного дизайна: как я прошла собеседование в топ-компанию. Пошаговый план подготовки, вопросы, которые задавали, и мои реальные ответы с разбором ошибок.'},
+    {id:'p3', author:'Марат Финанс', meta:'Деньги и рынки · сегодня', premium:true, price:300,
+      text:'Мой личный портфель на этот квартал: какие активы держу, почему вышел из двух позиций на прошлой неделе и что покупаю дальше. Подробные цифры внутри.'},
+    {id:'p4', author:'Марат Финанс', meta:'Деньги и рынки · 3 дня назад', premium:false, price:0,
+      text:'Короткий разбор новостей по ставке ЦБ — бесплатно для всех подписчиков.'},
+    {id:'p5', author:'Лина Дизайн', meta:'UI/UX журнал · сегодня', premium:true, price:300,
+      text:'Мой файл в Figma с 40 готовыми компонентами для мобильных приложений + видео, как я их собирала.'},
+  ];
+
+  const EMOJI_CHOICES = ['🙂','😎','🚀','🔥','🌟','🐱','🐼','🦊','🎯','🎨','⚡','🌙'];
+  const NAME_COLOR_CHOICES = [
+    {key:'default', label:'Обычный', swatch:'linear-gradient(135deg,#8793AD,#8793AD)'},
+    {key:'rainbow', label:'Радужный', swatch:'linear-gradient(90deg,#FF5C5C,#FFC24B,#4BFF9F,#4BD1FF,#B36BFF)'},
+    {key:'gold', label:'Золотой', swatch:'linear-gradient(135deg,#E8A33D,#E8A33D)'},
+    {key:'cyan', label:'Голубой', swatch:'linear-gradient(135deg,#4BD1FF,#4BD1FF)'},
+    {key:'pink', label:'Розовый', swatch:'linear-gradient(135deg,#FF6BD6,#FF6BD6)'},
+    {key:'green', label:'Зелёный', swatch:'linear-gradient(135deg,#4BFF9F,#4BFF9F)'},
+  ];
+  function nameColorClass(color){
+    return color && color !== 'default' ? 'tp-name-' + color : '';
+  }
+  const PREMIUM_PRICE = 500;
+  const AVATAR_FRAMES = [
+    {key:'none', label:'Без рамки'},
+    {key:'pulse', label:'Пульс'},
+    {key:'spin', label:'Радужная рамка'},
+    {key:'gold', label:'Золотая рамка'},
+  ];
+  const STATUS_EMOJI_CHOICES = ['🔥','🎮','😴','🎧','💼','📚','✈️','☕','🎨','🚀','💎','🌙'];
+  const FREE_REACTIONS = ['👍','❤️','😂'];
+  const PREMIUM_REACTIONS = ['🔥','🎉','💯','🥳','✨','🚀'];
+  const GLOBAL_CHAT_KEY = 'global-chat-messages';
+  let chatPollTimer = null;
+  let lastMessagesSignature = '';
+
+  const memoryStore = {};
+  function memKey(key, shared){ return (shared ? 'S:' : 'P:') + key; }
+  function withTimeout(promise, ms){
+    return Promise.race([
+      promise,
+      new Promise((_, reject)=>setTimeout(()=>reject(new Error('timeout')), ms))
+    ]);
+  }
+  async function sSet(key, value, shared){
+    memoryStore[memKey(key, shared)] = value;
+    for(let attempt=0; attempt<4; attempt++){
+      try{
+        if(window.storage){
+          await withTimeout(window.storage.set(key, value, shared), 3000 + attempt*1500);
+          return { key, value, shared };
+        }
+      }catch(e){ /* retry */ }
+    }
+    return { key, value, shared };
+  }
+  async function sGet(key, shared){
+    for(let attempt=0; attempt<3; attempt++){
+      try{
+        if(window.storage){
+          const res = await withTimeout(window.storage.get(key, shared), 3000 + attempt*1500);
+          if(res){ memoryStore[memKey(key, shared)] = res.value; return res; }
+        }
+      }catch(e){ /* try again / fall through */ }
+    }
+    const mk = memKey(key, shared);
+    if(mk in memoryStore) return { key, value: memoryStore[mk], shared };
+    throw new Error('not-found');
+  }
+
+  function uid(){return state.username;}
+  function sanitizeUsername(s){
+    return s.trim().replace(/[\s\/\\'"]/g, '').toLowerCase();
+  }
+  function toast(msg){
+    state.toast = msg;
+    render();
+    setTimeout(()=>{ state.toast=null; render(); }, 2400);
+  }
+
+  async function ensurePostsSeeded(){
+    try{
+      const res = await sGet('posts', true);
+      state.posts = JSON.parse(res.value);
+    }catch(e){
+      try{
+        await sSet('posts', JSON.stringify(SEED_POSTS), true);
+        state.posts = SEED_POSTS;
+      }catch(e2){ state.posts = SEED_POSTS; }
+    }
+  }
+
+  async function loadUnlocked(){
+    try{
+      const res = await sGet('unlocked:'+uid(), true);
+      state.unlocked = JSON.parse(res.value);
+    }catch(e){ state.unlocked = []; }
+  }
+
+  async function loadFriends(){
+    try{
+      const res = await sGet('friends:'+uid(), true);
+      state.friends = JSON.parse(res.value);
+    }catch(e){ state.friends = []; }
+  }
+
+  // ---------- User directory (for searching people to add) ----------
+  async function registerToDirectory(username){
+    let dir = [];
+    try{ const res = await sGet('user-directory', true); dir = JSON.parse(res.value); }catch(e){ dir = []; }
+    if(!dir.includes(username)){
+      dir.push(username);
+      try{ await sSet('user-directory', JSON.stringify(dir), true); }catch(e){}
+    }
+  }
+  async function loadUserDirectory(){
+    try{
+      const res = await sGet('user-directory', true);
+      state.userDirectory = JSON.parse(res.value);
+    }catch(e){ state.userDirectory = []; }
+  }
+
+  // ---------- Groups ----------
+  async function loadGroups(){
+    let ids = [];
+    try{ const res = await sGet('mygroups:'+uid(), true); ids = JSON.parse(res.value); }catch(e){ ids = []; }
+    const groups = [];
+    for(const id of ids){
+      try{
+        const res = await sGet('group-meta:'+id, true);
+        groups.push(JSON.parse(res.value));
+      }catch(e){ /* skip missing group */ }
+    }
+    state.groups = groups;
+  }
+
+  async function createGroup(name, memberUsernames){
+    const cleanName = (name || '').trim();
+    if(!cleanName){ toast('Введите название группы'); return; }
+    const members = Array.from(new Set([state.username, ...memberUsernames]));
+    if(members.length < 2){ toast('Выберите хотя бы одного друга для группы'); return; }
+    const id = 'g' + Date.now();
+    const meta = { id, name: cleanName, members, owner: state.username };
+    try{ await sSet('group-meta:'+id, JSON.stringify(meta), true); }catch(e){}
+    for(const member of members){
+      let ids = [];
+      try{ const res = await sGet('mygroups:'+member, true); ids = JSON.parse(res.value); }catch(e){ ids = []; }
+      if(!ids.includes(id)){
+        ids.push(id);
+        try{ await sSet('mygroups:'+member, JSON.stringify(ids), true); }catch(e){}
+      }
+    }
+    state.groups.push(meta);
+    state.showGroupComposer = false;
+    state.groupComposerMembers = [];
+    toast('Группа «' + cleanName + '» создана ✅');
+    await switchRoom('group:'+id);
+  }
+
+  function dmKey(a,b){ return 'dm:' + [a,b].sort().join('__'); }
+  function currentRoomKey(){
+    if(state.activeRoom === 'global') return GLOBAL_CHAT_KEY;
+    if(typeof state.activeRoom === 'string' && state.activeRoom.startsWith('group:')){
+      return 'group-chat:' + state.activeRoom.slice(6);
+    }
+    return dmKey(state.username, state.activeRoom);
+  }
+  function currentGroupMeta(){
+    if(typeof state.activeRoom !== 'string' || !state.activeRoom.startsWith('group:')) return null;
+    const id = state.activeRoom.slice(6);
+    return state.groups.find(g => g.id === id) || null;
+  }
+
+  async function loadRoomMessages(){
+    const key = currentRoomKey();
+    try{
+      const res = await sGet(key, true);
+      state.messages = JSON.parse(res.value);
+    }catch(e){
+      state.messages = state.activeRoom === 'global'
+        ? [{user:'TELEpost', text:'Добро пожаловать в общий чат TELEpost! Здесь видят все.', ts:Date.now()}]
+        : [];
+      try{ await sSet(key, JSON.stringify(state.messages), true); }catch(e2){}
+    }
+    lastMessagesSignature = JSON.stringify(state.messages);
+  }
+
+  async function pollRoomMessages(){
+    const key = currentRoomKey();
+    try{
+      const res = await sGet(key, true);
+      const fresh = JSON.parse(res.value);
+      const sig = JSON.stringify(fresh);
+      if(sig !== lastMessagesSignature){
+        lastMessagesSignature = sig;
+        state.messages = fresh;
+        if(state.view==='app' && state.tab==='chats'){
+          const msgBox = document.getElementById('tp-messages');
+          if(msgBox){
+            const wasAtBottom = msgBox.scrollTop + msgBox.clientHeight >= msgBox.scrollHeight - 40;
+            msgBox.innerHTML = '';
+            state.messages.forEach(m=>msgBox.appendChild(renderMsgBubble(m)));
+            if(wasAtBottom) msgBox.scrollTop = msgBox.scrollHeight;
+          }
+        }
+      }
+    }catch(e){ /* ignore transient poll errors */ }
+  }
+
+  function startChatPolling(){
+    stopChatPolling();
+    chatPollTimer = setInterval(pollRoomMessages, 2200);
+  }
+  function stopChatPolling(){
+    if(chatPollTimer){ clearInterval(chatPollTimer); chatPollTimer = null; }
+  }
+
+  async function switchRoom(roomId){
+    state.activeRoom = roomId;
+    state.messages = [];
+    render();
+    await loadRoomMessages();
+    render();
+    startChatPolling();
+  }
+
+  async function saveUser(overrides){
+    const base = {
+      password: cachedPassword,
+      coins: state.coins,
+      avatar: state.avatar,
+      nameColor: state.nameColor,
+      isPremium: state.isPremium,
+      avatarFrame: state.avatarFrame,
+      statusEmoji: state.statusEmoji,
+      statusText: state.statusText,
+    };
+    const userObj = Object.assign(base, overrides || {});
+    if(!userObj.password){ userObj.password = await getPassword(); }
+    await sSet('user:'+state.username, JSON.stringify(userObj), true);
+  }
+
+  function makeRecoveryCode(username, password){
+    try{ return btoa(unescape(encodeURIComponent(username + '::' + password))); }
+    catch(e){ return ''; }
+  }
+  function parseRecoveryCode(code){
+    try{
+      const decoded = decodeURIComponent(escape(atob(code.trim())));
+      const idx = decoded.indexOf('::');
+      if(idx < 0) return null;
+      return { username: decoded.slice(0, idx), password: decoded.slice(idx+2) };
+    }catch(e){ return null; }
+  }
+
+  async function finishLogin(username, password, userObj){
+    state.username = username; state.coins = userObj.coins; state.avatar = userObj.avatar || '🙂';
+    state.nameColor = userObj.nameColor || 'default';
+    state.isPremium = !!userObj.isPremium;
+    state.avatarFrame = userObj.avatarFrame || 'none';
+    state.statusEmoji = userObj.statusEmoji || '';
+    state.statusText = userObj.statusText || '';
+    cachedPassword = password;
+    state.myCode = makeRecoveryCode(username, password);
+    await registerToDirectory(username);
+    await ensurePostsSeeded();
+    await loadUnlocked();
+    await loadFriends();
+    await loadUserDirectory();
+    await loadGroups();
+    await loadNotifications();
+    state.activeRoom = 'global';
+    await loadRoomMessages();
+    state.view = 'app'; state.loading = false;
+    render();
+    startChatPolling();
+    startNotifPolling();
+  }
+
+  async function handleAuthSubmit(rawUsername, password){
+    state.error = '';
+    if(!rawUsername || !password){ state.error = 'Заполните имя пользователя и пароль'; render(); return; }
+    const username = sanitizeUsername(rawUsername);
+    if(username.length < 3){ state.error = 'Имя пользователя — минимум 3 символа, без пробелов'; render(); return; }
+    if(password.length < 3){ state.error = 'Пароль — минимум 3 символа'; render(); return; }
+    state.loading = true; render();
+    try{
+      if(state.authMode === 'register'){
+        let exists = null;
+        try{ exists = await sGet('user:'+username, true); }catch(e){ exists = null; }
+        if(exists){ state.error = 'Такой пользователь уже существует, попробуйте войти'; state.loading=false; render(); return; }
+        const userObj = { password, coins: 350, avatar: EMOJI_CHOICES[Math.floor(Math.random()*EMOJI_CHOICES.length)], nameColor: 'default' };
+        await sSet('user:'+username, JSON.stringify(userObj), true);
+        state.pendingCode = makeRecoveryCode(username, password);
+        state.pendingUsername = username;
+        state.pendingPassword = password;
+        state.pendingUserObj = userObj;
+        state.loading = false;
+        state.view = 'save_code';
+        render();
+        return;
+      } else {
+        let res;
+        try{ res = await sGet('user:'+username, true); }
+        catch(e){
+          state.error = 'Аккаунт не найден в хранилище. Если у вас есть код входа из настроек, воспользуйтесь кнопкой «Войти по коду» ниже.';
+          state.loading=false; render(); return;
+        }
+        const userObj = JSON.parse(res.value);
+        if(userObj.password !== password){ state.error = 'Неверный пароль'; state.loading=false; render(); return; }
+        await finishLogin(username, password, userObj);
+      }
+    }catch(e){
+      state.error = 'Ошибка хранилища: ' + (e && e.message ? e.message : 'попробуйте ещё раз');
+      state.loading = false;
+      render();
+    }
+  }
+
+  // Logging in with a saved recovery code never depends on the account
+  // record being found in storage first — it trusts the code, restores
+  // whatever data it can find, and re-saves the account so future logins
+  // (with or without the code) have the best chance of working.
+  async function loginWithCode(rawCode){
+    state.error = '';
+    const parsed = parseRecoveryCode(rawCode);
+    if(!parsed || !parsed.username || !parsed.password){
+      state.error = 'Код входа не распознан. Проверьте, что вы скопировали его полностью.';
+      render(); return;
+    }
+    state.loading = true; render();
+    const { username, password } = parsed;
+    let userObj = { password, coins: 350, avatar: EMOJI_CHOICES[0], nameColor: 'default' };
+    try{
+      const res = await sGet('user:'+username, true);
+      const stored = JSON.parse(res.value);
+      if(stored && stored.password === password) userObj = stored;
+    }catch(e){ /* nothing stored yet — we'll recreate it below */ }
+    try{
+      await sSet('user:'+username, JSON.stringify(userObj), true);
+      await finishLogin(username, password, userObj);
+    }catch(e){
+      state.error = 'Не удалось войти по коду, попробуйте ещё раз';
+      state.loading = false; render();
+    }
+  }
+
+  function logout(){
+    stopChatPolling();
+    stopNotifPolling();
+    state.view='auth'; state.username=null; state.coins=0; state.error='';
+    state.authMode='login'; state.friends=[]; state.messages=[]; state.activeRoom='global';
+    state.groups = []; state.notifications = []; state.notifOpen = false; state.userDirectory = [];
+    cachedPassword = null;
+    render();
+  }
+
+  // ---------- Voice messages ----------
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let recordingStopTimer = null;
+
+  async function startRecording(){
+    if(state.isRecording) return;
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      toast('Микрофон недоступен в этом браузере'); return;
+    }
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recordedChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e)=>{ if(e.data && e.data.size > 0) recordedChunks.push(e.data); };
+      mediaRecorder.onstop = async ()=>{
+        stream.getTracks().forEach(t=>t.stop());
+        state.isRecording = false;
+        render();
+        if(!recordedChunks.length) return;
+        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        if(blob.size > 900000){ toast('Голосовое слишком длинное, запишите покороче'); return; }
+        const reader = new FileReader();
+        reader.onload = ()=>{ sendMessage('', reader.result); };
+        reader.readAsDataURL(blob);
+      };
+      mediaRecorder.start();
+      state.isRecording = true;
+      render();
+      // Auto-stop after 30s so recordings stay small enough to store.
+      recordingStopTimer = setTimeout(()=> stopRecording(), 30000);
+    }catch(e){
+      toast('Не удалось получить доступ к микрофону');
+    }
+  }
+
+  function stopRecording(){
+    if(recordingStopTimer){ clearTimeout(recordingStopTimer); recordingStopTimer = null; }
+    if(mediaRecorder && state.isRecording){ mediaRecorder.stop(); }
+  }
+
+  async function sendMessage(text, audioDataUrl){
+    const cleanText = (text || '').trim();
+    if(!cleanText && !audioDataUrl) return;
+    const key = currentRoomKey();
+    const msg = {
+      user: state.username, text: cleanText, ts: Date.now(), color: state.nameColor,
+      statusEmoji: state.isPremium ? state.statusEmoji : '', reactions: {},
+      audio: audioDataUrl || null,
+    };
+    state.messages.push(msg);
+    lastMessagesSignature = JSON.stringify(state.messages);
+    render();
+    try{
+      let latest = state.messages;
+      try{
+        const res = await sGet(key, true);
+        latest = JSON.parse(res.value);
+      }catch(e){ /* use local state.messages if nothing stored yet */ }
+      latest.push(msg);
+      await sSet(key, JSON.stringify(latest), true);
+      state.messages = latest;
+      lastMessagesSignature = JSON.stringify(latest);
+    }catch(e){ /* message still shows locally even if sync failed */ }
+
+    // Notify recipients (friend in a DM, or every other member of a group)
+    const preview = audioDataUrl ? '🎤 голосовое сообщение' : cleanText.slice(0, 60);
+    if(state.activeRoom !== 'global'){
+      if(typeof state.activeRoom === 'string' && state.activeRoom.startsWith('group:')){
+        const meta = currentGroupMeta();
+        if(meta){
+          meta.members.filter(m => m !== state.username).forEach(m=>{
+            pushNotification(m, { type:'group', text: `${state.username} в «${meta.name}»: ${preview}`, room: state.activeRoom });
+          });
+        }
+      }else{
+        pushNotification(state.activeRoom, { type:'dm', text: `${state.username}: ${preview}`, room: state.username });
+      }
+    }
+  }
+
+  async function addFriend(rawName){
+    const name = sanitizeUsername(rawName || '');
+    if(!name){ state.addFriendMsg = 'Введите имя пользователя'; render(); return; }
+    if(name === state.username){ state.addFriendMsg = 'Это ваш собственный аккаунт 🙂'; render(); return; }
+    if(state.friends.includes(name)){
+      state.addFriendMsg = '';
+      await switchRoom(name);
+      return;
+    }
+    state.addFriendMsg = 'Ищем пользователя…'; render();
+    let exists;
+    try{ exists = await sGet('user:'+name, true); }
+    catch(e){ state.addFriendMsg = 'Пользователь с таким именем не найден'; render(); return; }
+    state.friends.push(name);
+    await sSet('friends:'+state.username, JSON.stringify(state.friends), true);
+    try{
+      const fres = await sGet('friends:'+name, true);
+      const theirFriends = JSON.parse(fres.value);
+      if(!theirFriends.includes(state.username)){
+        theirFriends.push(state.username);
+        await sSet('friends:'+name, JSON.stringify(theirFriends), true);
+      }
+    }catch(e){
+      await sSet('friends:'+name, JSON.stringify([state.username]), true);
+    }
+    state.addFriendMsg = 'Друг добавлен ✅';
+    toast('Теперь вы можете переписываться с ' + name);
+    await switchRoom(name);
+  }
+
+  async function buyPost(post){
+    if(state.coins < post.price){ toast('Недостаточно монет 💎'); return; }
+    state.coins -= post.price;
+    state.unlocked.push(post.id);
+    render();
+    try{
+      await saveUser();
+      await sSet('unlocked:'+uid(), JSON.stringify(state.unlocked), true);
+      toast('Пост разблокирован ✅');
+    }catch(e){
+      toast('Ошибка сохранения покупки');
+    }
+  }
+
+  // Lets any logged-in user publish their own post into the shared feed.
+  // We re-fetch the latest post list right before writing so we don't
+  // clobber posts someone else published in the meantime.
+  async function createPost(text, isPremium, price, image, videoUrl){
+    const cleanText = (text || '').trim();
+    if(!cleanText && !image && !videoUrl){ toast('Добавьте текст, фото или видео'); return; }
+    const cleanPrice = isPremium ? Math.max(1, parseInt(price, 10) || 300) : 0;
+    const post = {
+      id: 'u-' + state.username + '-' + Date.now(),
+      author: state.username,
+      authorColor: state.nameColor,
+      authorStatusEmoji: state.isPremium ? state.statusEmoji : '',
+      meta: 'от вас · только что',
+      premium: !!isPremium,
+      price: cleanPrice,
+      text: cleanText,
+      image: image || null,
+      videoUrl: (videoUrl || '').trim() || null,
+      reactions: {},
+      comments: [],
+      shares: 0,
+      ts: Date.now(),
+    };
+    let latest = state.posts;
+    try{
+      const res = await sGet('posts', true);
+      latest = JSON.parse(res.value);
+    }catch(e){ /* use local state.posts if nothing stored yet */ }
+    latest.unshift(post); // newest first
+    state.posts = latest;
+    // Authors automatically get access to their own premium posts.
+    if(post.premium && !state.unlocked.includes(post.id)){
+      state.unlocked.push(post.id);
+      try{ await sSet('unlocked:'+uid(), JSON.stringify(state.unlocked), true); }catch(e){}
+    }
+    try{
+      await sSet('posts', JSON.stringify(latest), true);
+      toast(post.premium ? 'Premium-пост опубликован ✅' : 'Пост опубликован ✅');
+    }catch(e){
+      toast('Пост показан, но не удалось сохранить в общей ленте');
+    }
+    render();
+  }
+
+  // Toggles the current user's reaction on a post (mirrors toggleReaction for chat messages).
+  async function togglePostReaction(postId, emoji, isPremiumSticker){
+    if(isPremiumSticker && !state.isPremium){
+      toast('Эта анимированная наклейка доступна только с TELEpost Premium ⭐');
+      return;
+    }
+    let latest = state.posts;
+    try{
+      const res = await sGet('posts', true);
+      latest = JSON.parse(res.value);
+    }catch(e){ /* fall back to local copy */ }
+    const post = latest.find(p => p.id === postId);
+    if(!post){ render(); return; }
+    if(!post.reactions) post.reactions = {};
+    if(!post.reactions[emoji]) post.reactions[emoji] = [];
+    const idx = post.reactions[emoji].indexOf(state.username);
+    if(idx >= 0) post.reactions[emoji].splice(idx, 1);
+    else post.reactions[emoji].push(state.username);
+    if(post.reactions[emoji].length === 0) delete post.reactions[emoji];
+    state.posts = latest;
+    render();
+    try{ await sSet('posts', JSON.stringify(latest), true); }catch(e){}
+    if(idx < 0 && post.author !== state.username){
+      pushNotification(post.author, { type:'like', text: `${state.username} отреагировал(а) ${emoji} на ваш пост`, room: null });
+    }
+  }
+
+  async function addComment(postId, text){
+    const clean = (text || '').trim();
+    if(!clean) return;
+    let latest = state.posts;
+    try{
+      const res = await sGet('posts', true);
+      latest = JSON.parse(res.value);
+    }catch(e){ /* fall back to local copy */ }
+    const post = latest.find(p => p.id === postId);
+    if(!post){ render(); return; }
+    if(!post.comments) post.comments = [];
+    post.comments.push({ user: state.username, color: state.nameColor, text: clean, ts: Date.now() });
+    state.posts = latest;
+    render();
+    try{ await sSet('posts', JSON.stringify(latest), true); }catch(e){}
+    if(post.author !== state.username){
+      pushNotification(post.author, { type:'comment', text: `${state.username} прокомментировал(а): «${clean.slice(0,50)}»`, room: null });
+    }
+  }
+
+  function toggleExpandComments(postId){
+    state.expandedComments[postId] = !state.expandedComments[postId];
+    render();
+  }
+
+  // ---------- Notifications ----------
+  // Appends a notification to the recipient's own notification list in
+  // shared storage. Re-fetches first so we don't clobber concurrent writes.
+  async function pushNotification(recipient, notif){
+    if(!recipient || recipient === state.username) return;
+    let latest = [];
+    try{
+      const res = await sGet('notifications:'+recipient, true);
+      latest = JSON.parse(res.value);
+    }catch(e){ latest = []; }
+    latest.unshift(Object.assign({ ts: Date.now(), read: false }, notif));
+    latest = latest.slice(0, 50); // keep it bounded
+    try{ await sSet('notifications:'+recipient, JSON.stringify(latest), true); }catch(e){}
+  }
+
+  async function loadNotifications(){
+    try{
+      const res = await sGet('notifications:'+uid(), true);
+      state.notifications = JSON.parse(res.value);
+    }catch(e){ state.notifications = []; }
+  }
+
+  let notifPollTimer = null;
+  let lastNotifSignature = '';
+  async function pollNotifications(){
+    try{
+      const res = await sGet('notifications:'+uid(), true);
+      const fresh = JSON.parse(res.value);
+      const sig = JSON.stringify(fresh);
+      if(sig !== lastNotifSignature){
+        const hadUnreadBefore = state.notifications.filter(n=>!n.read).length;
+        const newOnes = fresh.filter(n => !n.read && !state.notifications.some(o => o.ts === n.ts && o.text === n.text));
+        lastNotifSignature = sig;
+        state.notifications = fresh;
+        if(newOnes.length && document.hidden === false){ /* tab visible, in-app badge is enough */ }
+        if(newOnes.length && state.notifPermission === 'granted' && typeof Notification !== 'undefined'){
+          newOnes.slice(0,3).forEach(n=>{
+            try{ new Notification('TELEpost', { body: n.text }); }catch(e){}
+          });
+        }
+        render();
+      }
+    }catch(e){ /* ignore transient poll errors */ }
+  }
+  function startNotifPolling(){
+    stopNotifPolling();
+    notifPollTimer = setInterval(pollNotifications, 4000);
+  }
+  function stopNotifPolling(){
+    if(notifPollTimer){ clearInterval(notifPollTimer); notifPollTimer = null; }
+  }
+
+  async function markNotificationsRead(){
+    if(!state.notifications.some(n=>!n.read)) return;
+    state.notifications = state.notifications.map(n=>Object.assign({}, n, {read:true}));
+    render();
+    try{ await sSet('notifications:'+uid(), JSON.stringify(state.notifications), true); }catch(e){}
+  }
+
+  function toggleNotifDropdown(){
+    state.notifOpen = !state.notifOpen;
+    render();
+    if(state.notifOpen) markNotificationsRead();
+  }
+
+  async function requestBrowserNotifications(){
+    if(typeof Notification === 'undefined'){ toast('Браузер не поддерживает уведомления'); return; }
+    try{
+      const perm = await Notification.requestPermission();
+      state.notifPermission = perm;
+      render();
+      toast(perm === 'granted' ? 'Уведомления браузера включены 🔔' : 'Разрешение не выдано');
+    }catch(e){ toast('Не удалось запросить разрешение'); }
+  }
+
+  function openNotification(n){
+    state.notifOpen = false;
+    if(n.room){ state.tab = 'chats'; switchRoom(n.room); }
+    else{ state.tab = 'premium'; render(); }
+  }
+
+  async function sharePost(post){
+    const shareText = `${post.author}: ${(post.text || '').slice(0, 120)}${post.text && post.text.length > 120 ? '…' : ''}`;
+    try{ await navigator.clipboard.writeText(shareText); toast('Пост скопирован — вставьте его другу в чат'); }
+    catch(e){ toast('Не удалось скопировать, попробуйте вручную'); }
+    let latest = state.posts;
+    try{
+      const res = await sGet('posts', true);
+      latest = JSON.parse(res.value);
+    }catch(e){ /* fall back to local copy */ }
+    const p = latest.find(x => x.id === post.id);
+    if(p){ p.shares = (p.shares || 0) + 1; state.posts = latest; render(); try{ await sSet('posts', JSON.stringify(latest), true); }catch(e){} }
+  }
+
+  // Resizes/compresses an image client-side before storing it as base64,
+  // since the whole 'posts' list shares one storage value with a size limit.
+  function readImageCompressed(file){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onerror = ()=> reject(new Error('read-failed'));
+      reader.onload = ()=>{
+        const img = new Image();
+        img.onerror = ()=> reject(new Error('decode-failed'));
+        img.onload = ()=>{
+          const maxW = 900;
+          const scale = Math.min(1, maxW / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.72));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  async function getPassword(){
+    if(cachedPassword) return cachedPassword;
+    try{
+      const res = await sGet('user:'+state.username, true);
+      cachedPassword = JSON.parse(res.value).password;
+    }catch(e){ cachedPassword = ''; }
+    return cachedPassword;
+  }
+
+  async function topUp(){
+    state.coins += 300;
+    render();
+    try{
+      await saveUser();
+      toast('+300 💎 зачислено (демо-пополнение)');
+    }catch(e){}
+  }
+
+  async function updateAvatar(emoji){
+    state.avatar = emoji;
+    render();
+    try{
+      await saveUser();
+      toast('Аватар обновлён');
+    }catch(e){}
+  }
+
+  async function updateNameColor(colorKey){
+    state.nameColor = colorKey;
+    render();
+    try{
+      await saveUser();
+      toast('Цвет ника обновлён');
+    }catch(e){}
+  }
+
+  async function purchasePremium(){
+    if(state.isPremium){ return; }
+    if(state.coins < PREMIUM_PRICE){ toast('Недостаточно монет 💎 для Premium'); return; }
+    state.coins -= PREMIUM_PRICE;
+    state.isPremium = true;
+    render();
+    try{
+      await saveUser();
+      toast('🌟 Добро пожаловать в TELEpost Premium!');
+    }catch(e){
+      toast('Ошибка сохранения покупки Premium');
+    }
+  }
+
+  async function updateAvatarFrame(frameKey){
+    if(!state.isPremium){ toast('Рамки доступны только с TELEpost Premium ⭐'); return; }
+    state.avatarFrame = frameKey;
+    render();
+    try{ await saveUser(); toast('Рамка аватара обновлена'); }catch(e){}
+  }
+
+  async function updateStatus(emoji, text){
+    if(!state.isPremium){ toast('Статус доступен только с TELEpost Premium ⭐'); return; }
+    state.statusEmoji = emoji || '';
+    state.statusText = (text || '').trim().slice(0, 40);
+    render();
+    try{ await saveUser(); toast('Статус обновлён'); }catch(e){}
+  }
+
+  // Toggles the current user's reaction on a message. Re-fetches the room
+  // first so we don't clobber reactions someone else just added.
+  async function toggleReaction(ts, emoji, isPremiumSticker){
+    if(isPremiumSticker && !state.isPremium){
+      toast('Эта анимированная наклейка доступна только с TELEpost Premium ⭐');
+      return;
+    }
+    state.reactionPickerFor = null;
+    const key = currentRoomKey();
+    let latest = state.messages;
+    try{
+      const res = await sGet(key, true);
+      latest = JSON.parse(res.value);
+    }catch(e){ /* fall back to local copy */ }
+    const msg = latest.find(m => m.ts === ts);
+    if(!msg){ render(); return; }
+    if(!msg.reactions) msg.reactions = {};
+    if(!msg.reactions[emoji]) msg.reactions[emoji] = [];
+    const idx = msg.reactions[emoji].indexOf(state.username);
+    if(idx >= 0) msg.reactions[emoji].splice(idx, 1);
+    else msg.reactions[emoji].push(state.username);
+    if(msg.reactions[emoji].length === 0) delete msg.reactions[emoji];
+    state.messages = latest;
+    lastMessagesSignature = JSON.stringify(latest);
+    render();
+    try{ await sSet(key, JSON.stringify(latest), true); }catch(e){}
+  }
+
+  async function changePassword(current, next, confirm){
+    state.profileMsg = '';
+    if(!current || !next || !confirm){ state.profileMsg = 'err:Заполните все поля'; render(); return; }
+    const realPassword = await getPassword();
+    if(current !== realPassword){ state.profileMsg = 'err:Текущий пароль неверный'; render(); return; }
+    if(next.length < 3){ state.profileMsg = 'err:Новый пароль — минимум 3 символа'; render(); return; }
+    if(next !== confirm){ state.profileMsg = 'err:Пароли не совпадают'; render(); return; }
+    try{
+      cachedPassword = next;
+      await saveUser({ password: next });
+      state.myCode = makeRecoveryCode(state.username, next);
+      state.profileMsg = 'ok:Пароль обновлён ✅ Новый код входа показан ниже — сохраните его.';
+    }catch(e){
+      state.profileMsg = 'err:Не удалось сохранить, попробуйте ещё раз';
+    }
+    render();
+  }
+
+  function render(){
+    root.innerHTML = '';
+    if(state.view === 'auth'){ root.appendChild(renderAuth()); }
+    else if(state.view === 'save_code'){ root.appendChild(renderSaveCode()); }
+    else{ root.appendChild(renderApp()); }
+    if(state.toast){
+      const t = document.createElement('div');
+      t.className='tp-toast'; t.textContent = state.toast;
+      root.appendChild(t);
+    }
+  }
+
+  function renderSaveCode(){
+    const wrap = document.createElement('div');
+    wrap.className = 'tp-auth';
+    wrap.innerHTML = `
+      <div class="tp-auth-card">
+        <div class="tp-logo">
+          <div class="tp-logo-mark">T</div>
+          <div class="tp-logo-text">TELEpost</div>
+        </div>
+        <div class="tp-auth-sub" style="margin-bottom:14px;">Аккаунт <b style="color:var(--text)">${state.pendingUsername}</b> создан. Сохраните код входа — если вход по паролю не сработает, этот код всегда восстановит доступ.</div>
+        <div class="tp-field">
+          <label>Ваш код входа</label>
+          <textarea id="tp-code-box" readonly rows="3" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font-size:12.5px;font-family:monospace;resize:none;">${state.pendingCode}</textarea>
+        </div>
+        <button class="tp-btn-secondary" id="tp-copy-code">Скопировать код</button>
+        <button class="tp-btn-primary" id="tp-continue">Продолжить в TELEpost</button>
+        <div class="tp-hint">Код также будет доступен в разделе «Профиль» после входа.</div>
+      </div>
+    `;
+    wrap.querySelector('#tp-copy-code').addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(state.pendingCode); toast('Код скопирован'); }
+      catch(e){ wrap.querySelector('#tp-code-box').select(); toast('Выделите и скопируйте код вручную'); }
+    });
+    wrap.querySelector('#tp-continue').addEventListener('click', async ()=>{
+      state.loading = true; render();
+      await finishLogin(state.pendingUsername, state.pendingPassword, state.pendingUserObj);
+    });
+    return wrap;
+  }
+
+  function renderAuth(){
+    const wrap = document.createElement('div');
+    wrap.className = 'tp-auth';
+    wrap.innerHTML = `
+      <div class="tp-auth-card">
+        <div class="tp-logo">
+          <div class="tp-logo-mark">T</div>
+          <div class="tp-logo-text">TELEpost</div>
+        </div>
+        <div class="tp-auth-sub">Мессенджер с лентой premium-постов от авторов, которых вы читаете.</div>
+        <div class="tp-tabs">
+          <button class="tp-tab-btn ${state.authMode==='login'?'active':''}" data-mode="login">Вход</button>
+          <button class="tp-tab-btn ${state.authMode==='register'?'active':''}" data-mode="register">Регистрация</button>
+        </div>
+        ${!state.showCodeLogin ? `
+        <div class="tp-field">
+          <label>Имя пользователя</label>
+          <input type="text" id="tp-username" placeholder="например, anna_dev" autocomplete="username">
+        </div>
+        <div class="tp-field">
+          <label>Пароль</label>
+          <input type="password" id="tp-password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="tp-btn-primary" id="tp-submit" ${state.loading?'disabled':''}>
+          ${state.loading ? 'Подождите…' : (state.authMode==='login' ? 'Войти' : 'Создать аккаунт')}
+        </button>
+        ` : `
+        <div class="tp-field">
+          <label>Код входа</label>
+          <textarea id="tp-code-input" rows="3" placeholder="Вставьте код, полученный при регистрации" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font-size:12.5px;font-family:monospace;resize:none;"></textarea>
+        </div>
+        <button class="tp-btn-primary" id="tp-code-submit" ${state.loading?'disabled':''}>
+          ${state.loading ? 'Подождите…' : 'Войти по коду'}
+        </button>
+        `}
+        <div class="tp-error">${state.error}</div>
+        ${state.authMode==='login' ? `<button class="tp-btn-secondary" id="tp-toggle-code" type="button">${state.showCodeLogin ? '← Войти по имени и паролю' : 'Войти по коду доступа'}</button>` : ''}
+        <div class="tp-hint">Имя пользователя нечувствительно к регистру. При регистрации начисляется 350 💎 и выдаётся код входа для восстановления доступа. Аккаунт сохраняется — после выхода он никуда не исчезает.</div>
+      </div>
+    `;
+    wrap.querySelectorAll('.tp-tab-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ state.authMode = btn.dataset.mode; state.error=''; state.showCodeLogin=false; render(); });
+    });
+    const toggleBtn = wrap.querySelector('#tp-toggle-code');
+    if(toggleBtn){
+      toggleBtn.addEventListener('click', ()=>{ state.showCodeLogin = !state.showCodeLogin; state.error=''; render(); });
+    }
+    if(!state.showCodeLogin){
+      wrap.querySelector('#tp-submit').addEventListener('click', ()=>{
+        const u = wrap.querySelector('#tp-username').value.trim();
+        const p = wrap.querySelector('#tp-password').value;
+        handleAuthSubmit(u,p);
+      });
+      wrap.querySelectorAll('input').forEach(inp=>{
+        inp.addEventListener('keydown', (e)=>{
+          if(e.key==='Enter'){ wrap.querySelector('#tp-submit').click(); }
+        });
+      });
+    }else{
+      wrap.querySelector('#tp-code-submit').addEventListener('click', ()=>{
+        const code = wrap.querySelector('#tp-code-input').value;
+        loginWithCode(code);
+      });
+    }
+    return wrap;
+  }
+
+  function renderApp(){
+    const wrap = document.createElement('div');
+    wrap.className = 'tp-app';
+    const unreadCount = state.notifications.filter(n=>!n.read).length;
+    wrap.innerHTML = `
+      <div class="tp-header">
+        <div class="tp-header-left">
+          <div class="tp-logo-mark" style="width:30px;height:30px;font-size:14px;border-radius:9px;">T</div>
+          <div class="tp-logo-text" style="font-size:16px;">TELEpost</div>
+        </div>
+        <div class="tp-header-right">
+          <div class="tp-wallet">💎 ${state.coins}</div>
+          <button class="tp-icon-btn tp-notif-bell" id="tp-notif-bell">🔔${unreadCount ? `<span class="tp-notif-dot">${unreadCount > 9 ? '9+' : unreadCount}</span>` : ''}</button>
+          <button class="tp-icon-btn" id="tp-topup">Пополнить</button>
+          <button class="tp-icon-btn" id="tp-logout">Выйти (${state.username})</button>
+        </div>
+      </div>
+      <div class="tp-navbar">
+        <button class="tp-nav-btn ${state.tab==='chats'?'active':''}" data-tab="chats">💬 Чаты</button>
+        <button class="tp-nav-btn ${state.tab==='premium'?'active':''}" data-tab="premium">📰 Лента</button>
+        <button class="tp-nav-btn ${state.tab==='profile'?'active':''}" data-tab="profile">⚙️ Профиль</button>
+      </div>
+      <div class="tp-body" id="tp-body"></div>
+      ${state.notifOpen ? `
+      <div class="tp-notif-dropdown">
+        ${state.notifications.length ? state.notifications.map(n => `
+          <div class="tp-notif-item ${n.read?'':'unread'}" data-notif-ts="${n.ts}">
+            <div>${n.text}</div>
+            <div class="t">${new Date(n.ts).toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
+          </div>
+        `).join('') : '<div class="tp-notif-empty">Пока нет уведомлений</div>'}
+      </div>` : ''}
+    `;
+    wrap.querySelector('#tp-logout').addEventListener('click', logout);
+    wrap.querySelector('#tp-topup').addEventListener('click', topUp);
+    wrap.querySelector('#tp-notif-bell').addEventListener('click', (e)=>{ e.stopPropagation(); toggleNotifDropdown(); });
+    wrap.querySelectorAll('.tp-notif-item').forEach(item=>{
+      item.addEventListener('click', ()=>{
+        const n = state.notifications.find(x => String(x.ts) === item.dataset.notifTs);
+        if(n) openNotification(n);
+      });
+    });
+    wrap.querySelectorAll('.tp-nav-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ state.tab = btn.dataset.tab; state.notifOpen=false; render(); });
+    });
+    const body = wrap.querySelector('#tp-body');
+    if(state.tab === 'chats') body.appendChild(renderChats());
+    else if(state.tab === 'premium') body.appendChild(renderPremium());
+    else body.appendChild(renderProfile());
+    return wrap;
+  }
+
+  function renderMsgBubble(m){
+    const mine = m.user === state.username;
+    const d = document.createElement('div');
+    d.style.position = 'relative';
+    d.className = 'tp-msg ' + (mine ? 'me' : 'them');
+    if(!mine){
+      const author = document.createElement('div');
+      author.style.cssText = 'font-size:11px;font-weight:700;opacity:.85;margin-bottom:2px;';
+      const colorClass = nameColorClass(m.color);
+      if(colorClass) author.className = colorClass;
+      author.textContent = m.user;
+      if(m.statusEmoji){
+        const badge = document.createElement('span');
+        badge.className = 'tp-status-badge';
+        badge.textContent = m.statusEmoji;
+        author.appendChild(badge);
+      }
+      d.appendChild(author);
+    }
+    const body = document.createElement('div');
+    if(m.audio){
+      const voiceWrap = document.createElement('div');
+      voiceWrap.className = 'tp-voice-msg';
+      voiceWrap.innerHTML = `🎤<audio controls src="${m.audio}"></audio>`;
+      body.appendChild(voiceWrap);
+    }
+    if(m.text) body.appendChild(document.createTextNode(m.text));
+    d.appendChild(body);
+
+    // Reactions already on this message
+    const reactions = m.reactions || {};
+    const reactionKeys = Object.keys(reactions).filter(e => reactions[e] && reactions[e].length);
+    if(reactionKeys.length){
+      const row = document.createElement('div');
+      row.className = 'tp-reactions-row';
+      reactionKeys.forEach(emoji=>{
+        const chip = document.createElement('button');
+        const mineReacted = reactions[emoji].includes(state.username);
+        chip.className = 'tp-reaction-chip' + (mineReacted ? ' mine' : '');
+        chip.innerHTML = `${emoji} <span>${reactions[emoji].length}</span>`;
+        chip.addEventListener('click', ()=> toggleReaction(m.ts, emoji, PREMIUM_REACTIONS.includes(emoji)));
+        row.appendChild(chip);
+      });
+      d.appendChild(row);
+    }
+
+    // "+" button to open the reaction picker for this message
+    const addBtn = document.createElement('button');
+    addBtn.className = 'tp-reaction-add';
+    addBtn.textContent = '+';
+    addBtn.style.marginTop = reactionKeys.length ? '0' : '6px';
+    addBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      state.reactionPickerFor = (state.reactionPickerFor === m.ts) ? null : m.ts;
+      render();
+    });
+    if(reactionKeys.length){
+      const row = d.querySelector('.tp-reactions-row');
+      row.appendChild(addBtn);
+    }else{
+      const row = document.createElement('div');
+      row.className = 'tp-reactions-row';
+      row.appendChild(addBtn);
+      d.appendChild(row);
+    }
+
+    if(state.reactionPickerFor === m.ts){
+      const picker = document.createElement('div');
+      picker.className = 'tp-reaction-picker';
+      picker.style.top = '100%';
+      picker.style[mine ? 'right' : 'left'] = '0';
+      let html = '<div class="lbl">Обычные</div>';
+      FREE_REACTIONS.forEach(e => html += `<button data-emoji="${e}" data-sticker="0">${e}</button>`);
+      html += '<div class="lbl">⭐ Premium-стикеры</div>';
+      PREMIUM_REACTIONS.forEach(e => html += `<button data-emoji="${e}" data-sticker="1" class="${state.isPremium ? 'tp-sticker-anim' : 'locked'}">${e}</button>`);
+      picker.innerHTML = html;
+      picker.querySelectorAll('button').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          toggleReaction(m.ts, btn.dataset.emoji, btn.dataset.sticker === '1');
+        });
+      });
+      d.appendChild(picker);
+    }
+    return d;
+  }
+
+  function renderChats(){
+    const wrap = document.createElement('div');
+    wrap.style.display='flex'; wrap.style.flex='1'; wrap.style.minHeight='0';
+
+    const groupMeta = currentGroupMeta();
+    const windowTitle = state.activeRoom==='global' ? 'Общий чат'
+      : groupMeta ? groupMeta.name
+      : state.activeRoom;
+
+    const searchResults = state.friendSearchQuery.trim()
+      ? state.userDirectory.filter(u =>
+          u !== state.username &&
+          u.includes(state.friendSearchQuery.trim().toLowerCase()) &&
+          !state.friends.includes(u)
+        ).slice(0, 8)
+      : [];
+
+    const listHtml = `
+      <div class="tp-chat-list">
+        <div class="tp-search-box">
+          <input type="text" id="tp-user-search" placeholder="🔍 Найти людей по имени" value="${state.friendSearchQuery}">
+        </div>
+        ${searchResults.length ? `
+        <div class="tp-search-results">
+          ${searchResults.map(u => `
+            <div class="tp-search-result-item">
+              <span>${u}</span>
+              <button data-add="${u}">Подписаться</button>
+            </div>
+          `).join('')}
+        </div>` : ''}
+        <div class="tp-chat-item ${state.activeRoom==='global'?'active':''}" data-room="global">
+          <div class="tp-avatar">🌐</div>
+          <div>
+            <div class="tp-chat-name">Общий чат</div>
+            <div class="tp-chat-preview">Видят все зарегистрированные</div>
+          </div>
+        </div>
+
+        <div class="tp-section-label">Группы</div>
+        ${state.groups.length ? state.groups.map(g => `
+          <div class="tp-chat-item ${state.activeRoom==='group:'+g.id?'active':''}" data-room="group:${g.id}">
+            <div class="tp-avatar">👥</div>
+            <div>
+              <div class="tp-chat-name">${g.name}</div>
+              <div class="tp-chat-preview">${g.members.length} участников</div>
+            </div>
+          </div>
+        `).join('') : '<div class="tp-empty" style="padding:10px 14px;font-size:12px;">Пока нет групп</div>'}
+        <button class="tp-new-group-btn" id="tp-new-group-toggle">+ Создать группу</button>
+        ${state.showGroupComposer ? `
+        <div class="tp-group-composer">
+          <input type="text" id="tp-group-name" placeholder="Название группы">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Участники:</div>
+          ${state.friends.length ? state.friends.map(f => `
+            <label class="tp-group-member-check">
+              <input type="checkbox" value="${f}" ${state.groupComposerMembers.includes(f)?'checked':''} class="tp-group-member-cb">
+              ${f}
+            </label>
+          `).join('') : '<div style="font-size:11px;color:var(--muted);">Сначала добавьте друзей</div>'}
+          <button class="tp-btn-primary" id="tp-group-create" style="margin-top:10px;">Создать</button>
+        </div>` : ''}
+
+        <div class="tp-section-label">Друзья</div>
+        ${state.friends.length ? state.friends.map(f => `
+          <div class="tp-chat-item ${state.activeRoom===f?'active':''}" data-room="${f}">
+            <div class="tp-avatar">👤</div>
+            <div>
+              <div class="tp-chat-name">${f}</div>
+              <div class="tp-chat-preview">Личный чат</div>
+            </div>
+          </div>
+        `).join('') : '<div class="tp-empty" style="padding:14px;font-size:12px;">Пока нет друзей</div>'}
+        <div class="tp-addfriend">
+          <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;">Добавить по точному имени:</div>
+          <div class="tp-addfriend-row">
+            <input type="text" id="tp-friend-input" placeholder="имя пользователя">
+            <button id="tp-friend-add">Добавить</button>
+          </div>
+          <div class="tp-addfriend-msg">${state.addFriendMsg}</div>
+        </div>
+      </div>
+      <div class="tp-chat-window">
+        <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:13.5px;">${windowTitle}</div>
+        <div class="tp-messages" id="tp-messages"></div>
+        <div class="tp-composer">
+          <input type="text" id="tp-msg-input" placeholder="${state.activeRoom==='global' ? 'Написать в общий чат…' : 'Написать ' + windowTitle + '…'}">
+          <button class="tp-mic-btn ${state.isRecording?'recording':''}" id="tp-mic-btn" title="Голосовое сообщение">${state.isRecording ? '⏹️' : '🎤'}</button>
+          <button class="tp-send-btn" id="tp-send">Отправить</button>
+        </div>
+      </div>
+    `;
+    wrap.innerHTML = listHtml;
+
+    wrap.querySelectorAll('.tp-chat-item').forEach(item=>{
+      item.addEventListener('click', ()=>{ switchRoom(item.dataset.room); });
+    });
+
+    const searchInput = wrap.querySelector('#tp-user-search');
+    searchInput.addEventListener('input', ()=>{ state.friendSearchQuery = searchInput.value; render(); });
+    wrap.querySelectorAll('[data-add]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ addFriend(btn.dataset.add); state.friendSearchQuery=''; });
+    });
+
+    const groupToggleBtn = wrap.querySelector('#tp-new-group-toggle');
+    groupToggleBtn.addEventListener('click', ()=>{ state.showGroupComposer = !state.showGroupComposer; render(); });
+    wrap.querySelectorAll('.tp-group-member-cb').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        if(cb.checked) state.groupComposerMembers.push(cb.value);
+        else state.groupComposerMembers = state.groupComposerMembers.filter(m=>m!==cb.value);
+      });
+    });
+    const groupCreateBtn = wrap.querySelector('#tp-group-create');
+    if(groupCreateBtn){
+      groupCreateBtn.addEventListener('click', ()=>{
+        const name = wrap.querySelector('#tp-group-name').value;
+        createGroup(name, state.groupComposerMembers);
+      });
+    }
+
+    const friendInput = wrap.querySelector('#tp-friend-input');
+    const doAddFriend = ()=>{ const v = friendInput.value; friendInput.value=''; addFriend(v); };
+    wrap.querySelector('#tp-friend-add').addEventListener('click', doAddFriend);
+    friendInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') doAddFriend(); });
+
+    const msgBox = wrap.querySelector('#tp-messages');
+    if(state.messages.length){
+      state.messages.forEach(m=>msgBox.appendChild(renderMsgBubble(m)));
+    }else{
+      msgBox.innerHTML = '<div class="tp-empty">Пока нет сообщений — напишите первым!</div>';
+    }
+    setTimeout(()=>{ msgBox.scrollTop = msgBox.scrollHeight; }, 0);
+    const input = wrap.querySelector('#tp-msg-input');
+    const send = ()=>{ const v = input.value; input.value=''; sendMessage(v); };
+    wrap.querySelector('#tp-send').addEventListener('click', send);
+    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') send(); });
+    wrap.querySelector('#tp-mic-btn').addEventListener('click', ()=>{
+      if(state.isRecording) stopRecording(); else startRecording();
+    });
+    return wrap;
+  }
+
+  function renderPremium(){
+    const wrap = document.createElement('div');
+    wrap.className = 'tp-feed';
+
+    // Feed controls: chronological vs popular, everyone vs friends-only
+    const toolbar = document.createElement('div');
+    toolbar.className = 'tp-feed-toolbar';
+    toolbar.innerHTML = `
+      <div class="tp-feed-toggle">
+        <button data-sort="new" class="${state.feedSort==='new'?'active':''}">🕒 Новые</button>
+        <button data-sort="popular" class="${state.feedSort==='popular'?'active':''}">🔥 Популярное</button>
+      </div>
+      <div class="tp-feed-toggle">
+        <button data-filter="all" class="${state.feedFilter==='all'?'active':''}">Все</button>
+        <button data-filter="friends" class="${state.feedFilter==='friends'?'active':''}">Друзья</button>
+      </div>
+    `;
+    toolbar.querySelectorAll('[data-sort]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ state.feedSort = btn.dataset.sort; render(); });
+    });
+    toolbar.querySelectorAll('[data-filter]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ state.feedFilter = btn.dataset.filter; render(); });
+    });
+    wrap.appendChild(toolbar);
+
+    if(!state.showComposer){
+      const toggle = document.createElement('div');
+      toggle.className = 'tp-new-post-toggle';
+      toggle.textContent = '✍️ Написать пост';
+      toggle.addEventListener('click', ()=>{ state.showComposer = true; render(); });
+      wrap.appendChild(toggle);
+    }else{
+      const panel = document.createElement('div');
+      panel.className = 'tp-composer-panel';
+      panel.innerHTML = `
+        <textarea id="tp-new-post-text" placeholder="О чём хотите рассказать?"></textarea>
+        <div class="tp-media-input-row">
+          <label class="tp-media-btn" style="cursor:pointer;">📷 Добавить фото<input type="file" accept="image/*" id="tp-new-post-image" style="display:none;"></label>
+          <input type="text" id="tp-new-post-video" placeholder="Ссылка на видео (горизонтальное или вертикальное)" style="flex:1;min-width:180px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:inherit;font-size:12.5px;outline:none;">
+        </div>
+        <div id="tp-new-post-preview"></div>
+        <div class="tp-composer-row">
+          <label class="tp-composer-check">
+            <input type="checkbox" id="tp-new-post-premium" ${state.composerPremium ? 'checked' : ''}>
+            Сделать premium
+          </label>
+          <div class="tp-composer-price" id="tp-new-post-price-wrap" style="${state.composerPremium ? '' : 'display:none;'}">
+            <span style="font-size:12.5px;color:var(--muted);">Цена:</span>
+            <input type="number" id="tp-new-post-price" min="1" value="300"> 💎
+          </div>
+        </div>
+        <div class="tp-composer-row">
+          <button class="tp-btn-primary" id="tp-new-post-submit" style="margin-top:0;flex:1;">Опубликовать</button>
+          <button class="tp-btn-secondary" id="tp-new-post-cancel" style="margin-top:0;flex:1;">Отмена</button>
+        </div>
+      `;
+      wrap.appendChild(panel);
+
+      const premiumCheck = panel.querySelector('#tp-new-post-premium');
+      const priceWrap = panel.querySelector('#tp-new-post-price-wrap');
+      premiumCheck.addEventListener('change', ()=>{
+        state.composerPremium = premiumCheck.checked;
+        priceWrap.style.display = premiumCheck.checked ? '' : 'none';
+      });
+
+      const previewBox = panel.querySelector('#tp-new-post-preview');
+      function renderPreview(){
+        if(state.composerImage){
+          previewBox.innerHTML = `<div class="tp-media-preview"><img src="${state.composerImage}"><button class="tp-media-remove" id="tp-new-post-image-remove">✕</button></div>`;
+          previewBox.querySelector('#tp-new-post-image-remove').addEventListener('click', ()=>{ state.composerImage = null; renderPreview(); });
+        }else{
+          previewBox.innerHTML = '';
+        }
+      }
+      renderPreview();
+
+      panel.querySelector('#tp-new-post-image').addEventListener('change', async (e)=>{
+        const file = e.target.files && e.target.files[0];
+        if(!file) return;
+        try{
+          toast('Обрабатываем фото…');
+          state.composerImage = await readImageCompressed(file);
+          renderPreview();
+        }catch(err){ toast('Не удалось загрузить это фото'); }
+      });
+
+      panel.querySelector('#tp-new-post-cancel').addEventListener('click', ()=>{
+        state.showComposer = false; state.composerImage = null; state.composerVideoUrl = ''; render();
+      });
+      panel.querySelector('#tp-new-post-submit').addEventListener('click', ()=>{
+        const text = panel.querySelector('#tp-new-post-text').value;
+        const isPremium = panel.querySelector('#tp-new-post-premium').checked;
+        const price = panel.querySelector('#tp-new-post-price').value;
+        const videoUrl = panel.querySelector('#tp-new-post-video').value;
+        const image = state.composerImage;
+        state.showComposer = false; state.composerImage = null; state.composerVideoUrl = '';
+        createPost(text, isPremium, price, image, videoUrl);
+      });
+    }
+
+    // Apply filter (friends-only) then sort (new vs popular by total reactions+comments)
+    let visiblePosts = state.posts.slice();
+    if(state.feedFilter === 'friends'){
+      visiblePosts = visiblePosts.filter(p => p.author === state.username || state.friends.includes(p.author));
+    }
+    if(state.feedSort === 'popular'){
+      const score = p => Object.values(p.reactions || {}).reduce((s,arr)=>s+arr.length,0) + ((p.comments||[]).length) + (p.shares||0);
+      visiblePosts.sort((a,b)=> score(b) - score(a));
+    }
+
+    if(!visiblePosts.length){
+      const empty = document.createElement('div');
+      empty.className = 'tp-empty';
+      empty.textContent = state.feedFilter === 'friends' ? 'Пока нет постов от друзей.' : 'Пока нет постов.';
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    visiblePosts.forEach(post=>{
+      const isUnlocked = !post.premium || state.unlocked.includes(post.id);
+      const reactions = post.reactions || {};
+      const reactionKeys = Object.keys(reactions).filter(e => reactions[e] && reactions[e].length);
+      const totalLikes = reactionKeys.reduce((s,e)=>s+reactions[e].length, 0);
+      const comments = post.comments || [];
+      const commentsOpen = !!state.expandedComments[post.id];
+
+      const card = document.createElement('div');
+      card.className = 'tp-post';
+      let mediaHtml = '';
+      if(isUnlocked && post.image){
+        mediaHtml += `<div class="tp-post-media"><img src="${post.image}"></div>`;
+      }
+      if(isUnlocked && post.videoUrl){
+        mediaHtml += `<div class="tp-post-media"><video controls src="${post.videoUrl}"></video></div>`;
+      }
+      card.innerHTML = `
+        ${post.premium ? '<div class="tp-badge-premium">⭐ Premium</div>' : ''}
+        <div class="tp-post-head">
+          <div class="tp-avatar" style="width:32px;height:32px;font-size:12px;">${post.author.slice(0,1)}</div>
+          <div>
+            <div class="tp-post-author ${nameColorClass(post.authorColor)}">${post.author}${post.authorStatusEmoji ? `<span class="tp-status-badge">${post.authorStatusEmoji}</span>` : ''}</div>
+            <div class="tp-post-meta">${post.meta}</div>
+          </div>
+        </div>
+        ${post.text ? `<div class="tp-post-text ${isUnlocked?'':'locked'}">${post.text}</div>` : ''}
+        ${isUnlocked ? mediaHtml : ''}
+        ${post.premium ?
+          (isUnlocked
+            ? '<div class="tp-unlocked-tag">✓ Открыто</div>'
+            : `<div class="tp-unlock-bar">
+                 <div class="tp-unlock-text">Разблокируйте полный пост за ${post.price} 💎</div>
+                 <button class="tp-unlock-btn" data-id="${post.id}" data-price="${post.price}">Купить за ${post.price} 💎</button>
+               </div>`)
+          : ''}
+        ${isUnlocked ? `
+        <div class="tp-post-actions">
+          <button class="tp-post-action-btn tp-post-like-toggle" data-post="${post.id}">👍 ${totalLikes > 0 ? totalLikes : 'Нравится'}</button>
+          <button class="tp-post-action-btn tp-post-react-toggle" data-post="${post.id}">😀 Реакция</button>
+          <button class="tp-post-action-btn tp-post-comments-toggle" data-post="${post.id}">💬 ${comments.length > 0 ? comments.length + ' коммент.' : 'Комментировать'}</button>
+          <button class="tp-post-action-btn tp-post-share" data-post="${post.id}">↗️ Поделиться${post.shares ? ' · ' + post.shares : ''}</button>
+        </div>
+        ${reactionKeys.length ? `
+        <div class="tp-reactions-row">
+          ${reactionKeys.map(e => `<button class="tp-reaction-chip ${reactions[e].includes(state.username)?'mine':''}" data-react="${post.id}" data-emoji="${e}">${e} <span>${reactions[e].length}</span></button>`).join('')}
+        </div>` : ''}
+        <div class="tp-post-react-picker" data-picker-for="${post.id}" style="display:none;position:relative;">
+          <div class="tp-reaction-picker" style="position:static;display:flex;">
+            <div class="lbl">Обычные</div>
+            ${FREE_REACTIONS.map(e => `<button data-react="${post.id}" data-emoji="${e}">${e}</button>`).join('')}
+            <div class="lbl">⭐ Premium-стикеры</div>
+            ${PREMIUM_REACTIONS.map(e => `<button data-react="${post.id}" data-emoji="${e}" data-sticker="1" class="${state.isPremium ? 'tp-sticker-anim' : 'locked'}">${e}</button>`).join('')}
+          </div>
+        </div>
+        <div class="tp-comments-box" data-comments-for="${post.id}" style="display:${commentsOpen?'block':'none'};">
+          ${comments.map(c => `<div class="tp-comment"><b class="${nameColorClass(c.color)}">${c.user}:</b><span>${c.text}</span></div>`).join('')}
+          <div class="tp-comment-input-row">
+            <input type="text" placeholder="Написать комментарий…" data-comment-input="${post.id}">
+            <button class="tp-comment-send" data-comment-send="${post.id}">➤</button>
+          </div>
+        </div>
+        ` : ''}
+      `;
+      wrap.appendChild(card);
+    });
+
+    wrap.querySelectorAll('.tp-unlock-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.id;
+        const post = state.posts.find(p=>p.id===id);
+        buyPost(post);
+      });
+    });
+    wrap.querySelectorAll('.tp-post-like-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=> togglePostReaction(btn.dataset.post, '👍', false));
+    });
+    wrap.querySelectorAll('.tp-post-react-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const picker = wrap.querySelector(`.tp-post-react-picker[data-picker-for="${btn.dataset.post}"]`);
+        if(picker) picker.style.display = (picker.style.display === 'none') ? 'block' : 'none';
+      });
+    });
+    wrap.querySelectorAll('[data-react]').forEach(btn=>{
+      btn.addEventListener('click', ()=> togglePostReaction(btn.dataset.react, btn.dataset.emoji, btn.dataset.sticker === '1'));
+    });
+    wrap.querySelectorAll('.tp-post-comments-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=> toggleExpandComments(btn.dataset.post));
+    });
+    wrap.querySelectorAll('.tp-post-share').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const post = state.posts.find(p=>p.id===btn.dataset.post);
+        if(post) sharePost(post);
+      });
+    });
+    wrap.querySelectorAll('[data-comment-send]').forEach(btn=>{
+      const doSend = ()=>{
+        const input = wrap.querySelector(`[data-comment-input="${btn.dataset.commentSend}"]`);
+        const val = input.value; input.value = '';
+        addComment(btn.dataset.commentSend, val);
+      };
+      btn.addEventListener('click', doSend);
+    });
+    wrap.querySelectorAll('[data-comment-input]').forEach(input=>{
+      input.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter'){
+          const btn = wrap.querySelector(`[data-comment-send="${input.dataset.commentInput}"]`);
+          if(btn) btn.click();
+        }
+      });
+    });
+    return wrap;
+  }
+
+  function renderProfile(){
+    const wrap = document.createElement('div');
+    wrap.className = 'tp-profile';
+
+    let pwMsgHtml = '';
+    if(state.profileMsg){
+      const isOk = state.profileMsg.startsWith('ok:');
+      const text = state.profileMsg.slice(3);
+      pwMsgHtml = `<div class="${isOk ? 'tp-success' : 'tp-error'}">${text}</div>`;
+    }
+
+    wrap.innerHTML = `
+      <div class="tp-profile-card">
+        <div class="tp-profile-head">
+          <div class="tp-avatar-frame frame-${state.avatarFrame}">
+            <div class="tp-profile-avatar">${state.avatar}</div>
+          </div>
+          <div>
+            <div class="tp-profile-name ${nameColorClass(state.nameColor)}">${state.username}${state.isPremium ? '<span class="tp-premium-badge">⭐ PREMIUM</span>' : ''}</div>
+            <div class="tp-profile-balance">💎 ${state.coins} монет</div>
+            ${state.statusEmoji || state.statusText ? `<div class="tp-status-badge" style="margin-left:0;margin-top:4px;">${state.statusEmoji} ${state.statusText}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="tp-panel tp-premium-panel">
+          <h3>🌟 TELEpost Premium</h3>
+          ${state.isPremium ? `
+            <div style="color:var(--accent);font-size:12.5px;font-weight:700;margin-bottom:14px;">✓ Premium активен — вам доступны все функции ниже</div>
+          ` : `
+            <div class="tp-benefit-row"><span class="ic">🖼️</span><div><b>Рамки аватара</b><span class="d"> — анимированные и золотые обводки профиля</span></div></div>
+            <div class="tp-benefit-row"><span class="ic">💬</span><div><b>Эмодзи-статус</b><span class="d"> — покажите, чем заняты, рядом с именем</span></div></div>
+            <div class="tp-benefit-row"><span class="ic">✨</span><div><b>Premium-реакции</b><span class="d"> — эксклюзивные анимированные стикеры в чатах</span></div></div>
+            <button class="tp-btn-primary" id="tp-buy-premium">Оформить Premium — ${PREMIUM_PRICE} 💎</button>
+          `}
+        </div>
+
+        ${state.isPremium ? `
+        <div class="tp-panel">
+          <h3>Рамка аватара</h3>
+          <div class="tp-emoji-row">
+            ${AVATAR_FRAMES.map(f => `
+              <button class="tp-frame-swatch tp-frame-btn frame-${f.key} ${f.key===state.avatarFrame?'selected':''}" data-frame="${f.key}" title="${f.label}"
+                style="border:${f.key===state.avatarFrame?'2px solid var(--accent)':'1px solid var(--border)'};">${state.avatar}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="tp-panel">
+          <h3>Эмодзи-статус</h3>
+          <div class="tp-emoji-row" style="margin-bottom:12px;">
+            ${STATUS_EMOJI_CHOICES.map(e => `<button class="tp-emoji-btn tp-status-emoji-btn ${e===state.statusEmoji?'selected':''}" data-status-emoji="${e}">${e}</button>`).join('')}
+          </div>
+          <div class="tp-field">
+            <label>Текст статуса (необязательно)</label>
+            <input type="text" id="tp-status-text" placeholder="например, работаю над проектом" value="${state.statusText || ''}" maxlength="40">
+          </div>
+          <button class="tp-btn-secondary" id="tp-status-save">Сохранить статус</button>
+        </div>
+        ` : ''}
+
+        <div class="tp-panel">
+          <h3>Аватар</h3>
+          <div class="tp-emoji-row">
+            ${EMOJI_CHOICES.map(e => `<button class="tp-emoji-btn ${e===state.avatar?'selected':''}" data-emoji="${e}">${e}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="tp-panel">
+          <h3>Цвет ника</h3>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:12px;line-height:1.5;">
+            Ваше имя будет отображаться этим цветом в чатах и под вашими постами.
+          </div>
+          <div class="tp-emoji-row">
+            ${NAME_COLOR_CHOICES.map(c => `
+              <button class="tp-emoji-btn tp-color-btn ${c.key===state.nameColor?'selected':''}" data-color="${c.key}" title="${c.label}"
+                style="background:${c.swatch};width:auto;padding:0 12px;height:36px;font-size:12px;font-weight:700;color:${c.key==='default'?'var(--muted)':'#0B0F17'};">
+                ${c.label}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="tp-panel">
+          <h3>Сменить пароль</h3>
+          <div class="tp-field">
+            <label>Текущий пароль</label>
+            <input type="password" id="tp-pw-current" placeholder="••••••••">
+          </div>
+          <div class="tp-field">
+            <label>Новый пароль</label>
+            <input type="password" id="tp-pw-new" placeholder="••••••••">
+          </div>
+          <div class="tp-field">
+            <label>Повторите новый пароль</label>
+            <input type="password" id="tp-pw-confirm" placeholder="••••••••">
+          </div>
+          <button class="tp-btn-primary" id="tp-pw-save">Сохранить пароль</button>
+          ${pwMsgHtml}
+        </div>
+
+        <div class="tp-panel">
+          <h3>Код входа (на случай, если пароль не сработает)</h3>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:10px;line-height:1.5;">
+            Если при входе появится «пользователь не найден», нажмите «Войти по коду» на экране входа и вставьте этот код — он всегда восстановит доступ к аккаунту.
+          </div>
+          <textarea id="tp-mycode-box" readonly rows="2" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font-size:12px;font-family:monospace;resize:none;">${state.myCode}</textarea>
+          <button class="tp-btn-secondary" id="tp-mycode-copy">Скопировать код</button>
+        </div>
+
+        <div class="tp-panel">
+          <h3>🔔 Уведомления</h3>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:12px;line-height:1.5;">
+            Получайте push-уведомления браузера о новых сообщениях, лайках и комментариях, даже если вкладка свёрнута.
+          </div>
+          ${state.notifPermission === 'granted'
+            ? '<div class="tp-success">✓ Уведомления браузера включены</div>'
+            : `<button class="tp-btn-secondary" id="tp-enable-notifs">Включить уведомления браузера</button>`}
+        </div>
+
+        <div class="tp-panel">
+          <h3>Аккаунт</h3>
+          <div style="color:var(--muted);font-size:12.5px;line-height:1.6;">
+            Ваш аккаунт хранится под именем <b style="color:var(--text)">${state.username}</b> и остаётся сохранённым после выхода — просто войдите снова с тем же именем и паролем.
+          </div>
+          <button class="tp-btn-secondary" id="tp-profile-logout">Выйти из аккаунта</button>
+        </div>
+      </div>
+    `;
+
+    wrap.querySelectorAll('.tp-emoji-btn[data-emoji]').forEach(btn=>{
+      btn.addEventListener('click', ()=> updateAvatar(btn.dataset.emoji));
+    });
+    const buyPremiumBtn = wrap.querySelector('#tp-buy-premium');
+    if(buyPremiumBtn) buyPremiumBtn.addEventListener('click', purchasePremium);
+    wrap.querySelectorAll('.tp-frame-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=> updateAvatarFrame(btn.dataset.frame));
+    });
+    let selectedStatusEmoji = state.statusEmoji;
+    wrap.querySelectorAll('.tp-status-emoji-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        selectedStatusEmoji = (selectedStatusEmoji === btn.dataset.statusEmoji) ? '' : btn.dataset.statusEmoji;
+        wrap.querySelectorAll('.tp-status-emoji-btn').forEach(b=> b.classList.toggle('selected', b.dataset.statusEmoji===selectedStatusEmoji));
+      });
+    });
+    const statusSaveBtn = wrap.querySelector('#tp-status-save');
+    if(statusSaveBtn){
+      statusSaveBtn.addEventListener('click', ()=>{
+        const text = wrap.querySelector('#tp-status-text').value;
+        updateStatus(selectedStatusEmoji, text);
+      });
+    }
+    wrap.querySelectorAll('.tp-color-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=> updateNameColor(btn.dataset.color));
+    });
+    wrap.querySelector('#tp-pw-save').addEventListener('click', ()=>{
+      const cur = wrap.querySelector('#tp-pw-current').value;
+      const next = wrap.querySelector('#tp-pw-new').value;
+      const conf = wrap.querySelector('#tp-pw-confirm').value;
+      changePassword(cur, next, conf);
+    });
+    wrap.querySelector('#tp-profile-logout').addEventListener('click', logout);
+    const enableNotifsBtn = wrap.querySelector('#tp-enable-notifs');
+    if(enableNotifsBtn) enableNotifsBtn.addEventListener('click', requestBrowserNotifications);
+    const mycodeCopyBtn = wrap.querySelector('#tp-mycode-copy');
+    if(mycodeCopyBtn){
+      mycodeCopyBtn.addEventListener('click', async ()=>{
+        try{ await navigator.clipboard.writeText(state.myCode); toast('Код скопирован'); }
+        catch(e){ wrap.querySelector('#tp-mycode-box').select(); toast('Выделите и скопируйте код вручную'); }
+      });
+    }
+    return wrap;
+  }
+
+  render();
+})();
+</script>
